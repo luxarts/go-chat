@@ -1,0 +1,87 @@
+* {
+    font-family: Arial;
+    font-size: 14px;
+}
+body {
+    background: #000000;
+
+
+}
+#chat-window {
+    width: 80%;
+    margin: 0 auto;
+}
+#msg-box {
+    display: flex;
+    flex-direction: column;
+    background: #0e1622;
+    padding: 10px;
+    height: 600px;
+    overflow-y: scroll;
+}
+#input-box {
+    background: #17212b;
+    display: flex;
+    height: 45px;
+}
+#msg-input {
+    background: rgba(0,0,0,0);
+    border: 0;
+    color: #f3f3f3;
+    width: max-content;
+    padding: 15px;
+    margin: 0;
+    flex-grow: 1;
+}
+#msg-input:focus {
+    outline: none;
+}
+#msg-input::placeholder {
+    color: #5f7783;
+}
+#send-btn{
+    background: rgba(0,0,0,0);
+    color: #4983ce;
+    border: 0;
+}
+#send-btn:hover {
+    cursor: pointer;
+}
+
+.my-bubble, .others-bubble {
+    width: max-content;
+    color: #f3f3f3;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 3px;
+}
+
+.others-bubble {
+    background: #203046;
+    margin-right: auto;
+    border-bottom-left-radius: 0;
+}
+
+.my-bubble {
+    background: #2b5178;
+    margin-left: auto;
+    border-bottom-right-radius: 0;
+}
+
+.sender {
+    color: #85de6b;
+    font-weight: bold;
+}
+.timestamp {
+    float: right;
+}
+.others-bubble > .timestamp {
+    color: #6d7f8f
+}
+.my-bubble > .timestamp {
+    color: #7ca7d2
+}
+.blank-space {
+    display: inline-block;
+    width: 100px;
+}
