@@ -4,11 +4,10 @@
 }
 body {
     background: #000000;
-
-
 }
 #chat-window {
     width: 80%;
+    max-width: 600px;
     margin: 0 auto;
 }
 #msg-box {

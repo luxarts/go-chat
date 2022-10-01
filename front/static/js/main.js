@@ -28,6 +28,8 @@ const createBubble = (sender, msg, time) => {
 	bubbleElem.appendChild(timestampElem)
 
 	msgBoxElem.appendChild(bubbleElem)
+
+	msgBoxElem.scrollTo(0,msgBoxElem.scrollHeight)
 }
 const getCurrentTime = () => {
 	const d = new Date()
@@ -49,8 +51,8 @@ document.getElementById("send-btn").addEventListener("click", () => {
 	msg.value = ""
 })
 
+document.getElementById('msg-input').addEventListener('keydown', (e) => {
+	if(e.key !== 'Enter') return
 
-// createBubble("Don José", "Hola don Pepito", "23:58")
-// createBubble(null, "Hola don José", "23:59")
-// createBubble("Don José", "Hola don José", "23:58")
-// createBubble(null, "Hola don Pepito", "23:59")
+	document.getElementById('send-btn').click()
+})
