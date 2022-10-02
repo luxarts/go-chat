@@ -1,5 +1,6 @@
 package domain
 
-type Message struct {
-	Data []byte
+type Data struct {
+	User string `json:"user"`
+	Msg  string `json:"msg"`
 }

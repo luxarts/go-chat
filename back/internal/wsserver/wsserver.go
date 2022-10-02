@@ -2,6 +2,7 @@ package wsserver
 
 import (
 	"backend/internal/domain"
+	"encoding/json"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
@@ -13,12 +14,12 @@ type WSServer interface {
 	run()
 	registerUser(s *subscription)
 	unregisterUser(s *subscription)
-	sendMessage(m *domain.Message)
+	sendMessage(m *domain.Data)
 }
 
 type wsServer struct {
 	connections    map[*connection]bool
-	messageChan    chan domain.Message
+	dataChan       chan domain.Data
 	registerChan   chan subscription
 	unregisterChan chan subscription
 	upgrader       websocket.Upgrader
@@ -38,7 +39,7 @@ func New(config *Config) WSServer {
 
 	wss := &wsServer{
 		connections:    make(map[*connection]bool),
-		messageChan:    make(chan domain.Message),
+		dataChan:       make(chan domain.Data),
 		registerChan:   make(chan subscription),
 		unregisterChan: make(chan subscription),
 		upgrader:       u,
@@ -59,8 +60,8 @@ func (wss *wsServer) run() {
 			case s := <-wss.unregisterChan:
 				wss.unregisterUser(&s)
 
-			case m := <-wss.messageChan:
-				wss.sendMessage(&m)
+			case d := <-wss.dataChan:
+				wss.sendMessage(&d)
 			}
 		}
 	}()
@@ -79,10 +80,16 @@ func (wss *wsServer) unregisterUser(s *subscription) {
 		}
 	}
 }
-func (wss *wsServer) sendMessage(m *domain.Message) {
+func (wss *wsServer) sendMessage(m *domain.Data) {
 	for c := range wss.connections {
+		dataBytes, err := json.Marshal(m)
+		if err != nil {
+			log.Printf("error marshaling: %v\n", err)
+			break
+		}
+
 		select {
-		case c.send <- m.Data:
+		case c.send <- dataBytes:
 		default:
 			close(c.send)
 			delete(wss.connections, c)
@@ -110,5 +117,5 @@ func (wss *wsServer) Subscribe(conn *connection) {
 	wss.registerChan <- s
 
 	s.writeRoutine()
-	s.readRoutine(wss.unregisterChan, wss.messageChan)
+	s.readRoutine(wss.unregisterChan, wss.dataChan)
 }

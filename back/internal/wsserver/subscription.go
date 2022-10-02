@@ -2,6 +2,7 @@ package wsserver
 
 import (
 	"backend/internal/domain"
+	"encoding/json"
 	"github.com/gorilla/websocket"
 	"log"
 	"time"
@@ -50,7 +51,7 @@ func (s *subscription) writeRoutine() {
 		}
 	}()
 }
-func (s *subscription) readRoutine(unregisterChan chan subscription, messageChan chan domain.Message) {
+func (s *subscription) readRoutine(unregisterChan chan subscription, dataChan chan domain.Data) {
 	go func() {
 		c := s.conn
 		defer func() {
@@ -69,15 +70,22 @@ func (s *subscription) readRoutine(unregisterChan chan subscription, messageChan
 		})
 
 		for {
-			msgType, msg, err := c.wsc.ReadMessage()
+			msgType, dataBytes, err := c.wsc.ReadMessage()
 			if err != nil {
 				if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
 					log.Printf("unexpected error on close: %v\n", err)
 				}
 				break
 			}
+
 			if msgType == websocket.TextMessage {
-				messageChan <- domain.Message{Data: msg}
+				var data domain.Data
+
+				if err := json.Unmarshal(dataBytes, &data); err != nil {
+					log.Printf("error unmarhaling: %v\n", err)
+				}
+
+				dataChan <- data
 			}
 		}
 	}()
