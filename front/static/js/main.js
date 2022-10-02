@@ -31,28 +31,54 @@ const createBubble = (sender, msg, time) => {
 
 	msgBoxElem.scrollTo(0,msgBoxElem.scrollHeight)
 }
-const getCurrentTime = () => {
-	const d = new Date()
+const getTime = (t) => {
+	const d = new Date(t)
 	const hours = d.getHours() > 9 ? d.getHours() : "0"+d.getHours()
 	const minutes = d.getMinutes() > 9 ? d.getMinutes() : "0"+d.getMinutes()
 
 	return hours + ":" + minutes
 }
+const setName = (name) => {
+	myName = name
+	document.getElementById("name").innerHTML = myName
+}
+
+const backendURL = "192.168.0.34:8080/chatroom"
+let myName = "Don Pepito"
+let connection;
 
 document.getElementById("send-btn").addEventListener("click", () => {
 	const msg = document.getElementById("msg-input")
 
 	if(msg.value === "") return
 
-	const time = getCurrentTime()
-
-	createBubble(null, msg.value, time)
+	const data = JSON.stringify({"user": myName, "msg": msg.value})
+	connection.send(data)
 
 	msg.value = ""
 })
-
 document.getElementById('msg-input').addEventListener('keydown', (e) => {
 	if(e.key !== 'Enter') return
 
 	document.getElementById('send-btn').click()
 })
+
+window.onload = () => {
+	connection = new WebSocket("ws://" + backendURL)
+	connection.onclose = () => {
+		console.error("Connection to server lost.")
+	}
+	connection.onmessage = (e) => {
+		const data = JSON.parse(e.data)
+
+		if(data.user === myName){
+			data.user = null
+		}
+		createBubble(data.user, data.msg, getTime(data.time))
+	}
+	connection.onopen = () => {
+		console.log("Connection opened.")
+	}
+
+	setName(myName)
+}
