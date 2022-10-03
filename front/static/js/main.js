@@ -80,5 +80,7 @@ window.onload = () => {
 		console.log("Connection opened.")
 	}
 
-	setName(myName)
+	// Get name from query param
+	const name = (new URL(document.location)).searchParams.get("name");
+	setName(name)
 }
