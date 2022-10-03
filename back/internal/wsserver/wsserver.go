@@ -35,6 +35,9 @@ func New(config *Config) WSServer {
 	u := websocket.Upgrader{
 		ReadBufferSize:  config.ReadBufferSize,
 		WriteBufferSize: config.ReadBufferSize,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
 	}
 
 	wss := &wsServer{

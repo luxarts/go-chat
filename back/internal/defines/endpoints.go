@@ -1,5 +1,5 @@
 package defines
 
 const (
-	EndpointChatRoomConnect = "/connection"
+	EndpointChatRoomConnect = "/chatroom"
 )

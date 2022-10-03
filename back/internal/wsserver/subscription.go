@@ -3,6 +3,7 @@ package wsserver
 import (
 	"backend/internal/domain"
 	"encoding/json"
+	"errors"
 	"github.com/gorilla/websocket"
 	"log"
 	"time"
@@ -79,14 +80,29 @@ func (s *subscription) readRoutine(unregisterChan chan subscription, dataChan ch
 			}
 
 			if msgType == websocket.TextMessage {
-				var data domain.Data
-
-				if err := json.Unmarshal(dataBytes, &data); err != nil {
-					log.Printf("error unmarhaling: %v\n", err)
+				if err := s.messageHandler(dataBytes, dataChan); err != nil {
+					log.Printf("error handling msg: %v\n", err)
 				}
-
-				dataChan <- data
 			}
 		}
 	}()
+}
+
+func (s *subscription) messageHandler(dataBytes []byte, dataChan chan domain.Data) error {
+	var data domain.Data
+
+	if err := json.Unmarshal(dataBytes, &data); err != nil {
+		log.Printf("error unmarhaling: %v\n", err)
+		return err
+	}
+
+	if !data.IsValid() {
+		return errors.New("empty user or msg")
+	}
+
+	data.Time = time.Now().UTC()
+
+	dataChan <- data
+
+	return nil
 }
