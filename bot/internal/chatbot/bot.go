@@ -39,9 +39,11 @@ func New(backendURL string) Bot {
 
 func (b *bot) OnCommand(command string, handler Handler) {
 	b.commands[command] = handler
+	log.Printf("[Bot] Registered command %v", command)
 }
 
 func (b *bot) Run() error {
+	log.Printf("[Bot] Bot running")
 	for {
 		msgType, dataBytes, err := b.conn.ReadMessage()
 		if err != nil {

@@ -6,6 +6,7 @@ import (
 	"bot/internal/defines"
 	"bot/internal/repository"
 	"bot/internal/service"
+	"github.com/go-resty/resty/v2"
 	"log"
 )
 
@@ -20,8 +21,11 @@ func main() {
 }
 
 func mapCommands(b chatbot.Bot) {
+	// RestClient
+	rc := resty.New()
+
 	// Repositories
-	repo := repository.NewStooqRepository()
+	repo := repository.NewStooqRepository(rc)
 
 	// Services
 	svc := service.NewQuoteRepository(repo)

@@ -23,7 +23,10 @@ func (c *commandsController) Stock(ctx *chatbot.Context) string {
 	payload := ctx.Payload
 	stockCode := payload[strings.Index(payload, "=")+1:]
 
-	quote := c.quoteSvc.GetQuote(stockCode)
+	quote, err := c.quoteSvc.GetQuote(stockCode)
+	if err != nil {
+		return fmt.Sprintf("An error ocurred: %v", err)
+	}
 
 	return fmt.Sprintf("%s quote is $%.2f per share.", quote.Symbol, quote.Close)
 }

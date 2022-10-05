@@ -6,7 +6,7 @@ import (
 )
 
 type QuoteService interface {
-	GetQuote(symbol string) *domain.Quote
+	GetQuote(symbol string) (*domain.Quote, error)
 }
 
 type quoteService struct {
@@ -17,6 +17,6 @@ func NewQuoteRepository(repo repository.StooqRepository) QuoteService {
 	return &quoteService{repo: repo}
 }
 
-func (s *quoteService) GetQuote(symbol string) *domain.Quote {
+func (s *quoteService) GetQuote(symbol string) (*domain.Quote, error) {
 	return s.repo.GetQuote(symbol)
 }

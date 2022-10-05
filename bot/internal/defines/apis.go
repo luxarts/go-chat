@@ -6,5 +6,6 @@ const (
 	APIBackendPathChatroom = "/chatroom"
 
 	// Stooq
-	APIStooqURL = "stooq.com"
+	APIStooqURL          = "stooq.com"
+	APIStooqPathGetQuote = "/q/l"
 )
