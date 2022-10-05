@@ -4,6 +4,7 @@
 }
 body {
     background: #000000;
+    color: #f3f3f3;
 }
 #chat-window {
     width: 80%;
@@ -83,4 +84,13 @@ body {
 .blank-space {
     display: inline-block;
     width: 100px;
+}
+#name-box {
+    display: flex;
+    background: #1f2937;
+    padding: 15px;
+}
+#name {
+    margin: 0 auto;
+    font-size: 18px;
 }
