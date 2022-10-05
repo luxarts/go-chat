@@ -1,5 +1,3 @@
-//setInterval(() => {location.reload()}, 1000)
-
 const msgBoxElem = document.getElementById("msg-box")
 
 const createBubble = (sender, msg, time) => {
@@ -43,7 +41,7 @@ const setName = (name) => {
 	document.getElementById("name").innerHTML = myName
 }
 
-const backendURL = "192.168.0.34:8080/chatroom"
+const backendPath = "/chatroom"
 let myName = "Don Pepito"
 let connection;
 
@@ -64,7 +62,7 @@ document.getElementById('msg-input').addEventListener('keydown', (e) => {
 })
 
 window.onload = () => {
-	connection = new WebSocket("ws://" + backendURL)
+	connection = new WebSocket("ws://" + backendURL + backendPath)
 	connection.onclose = () => {
 		console.error("Connection to server lost.")
 	}
