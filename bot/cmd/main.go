@@ -10,12 +10,9 @@ import (
 )
 
 func main() {
-	backendURL := "localhost:9090"
-	bot := chatbot.New(backendURL)
+	bot := chatbot.New(defines.APIBackendURL)
 
 	mapCommands(bot)
-
-	bot.SetMessage("/stock=aapl.us")
 
 	if err := bot.Run(); err != nil {
 		log.Fatalln(err)

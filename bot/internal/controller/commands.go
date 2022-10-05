@@ -8,7 +8,7 @@ import (
 )
 
 type CommandsController interface {
-	Stock(ctx *chatbot.Context)
+	Stock(ctx *chatbot.Context) string
 }
 
 type commandsController struct {
@@ -19,13 +19,11 @@ func NewCommandsController(quoteSvc service.QuoteService) CommandsController {
 	return &commandsController{quoteSvc: quoteSvc}
 }
 
-func (c *commandsController) Stock(ctx *chatbot.Context) {
+func (c *commandsController) Stock(ctx *chatbot.Context) string {
 	payload := ctx.Payload
 	stockCode := payload[strings.Index(payload, "=")+1:]
 
 	quote := c.quoteSvc.GetQuote(stockCode)
 
-	response := fmt.Sprintf("%s quote is $%.2f per share.", quote.Symbol, quote.Close)
-
-	ctx.Respond(response)
+	return fmt.Sprintf("%s quote is $%.2f per share.", quote.Symbol, quote.Close)
 }
