@@ -29,6 +29,7 @@ func New(backendURL string) Bot {
 	if err != nil {
 		log.Fatalf("failed to connect ws: %v", err)
 	}
+	log.Printf("[Bot] Connected to %s%s", backendURL, defines.APIBackendPathChatroom)
 
 	return &bot{
 		commands:   make(map[string]Handler),
