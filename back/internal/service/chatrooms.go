@@ -1,6 +1,7 @@
 package service
 
 import (
+	"backend/internal/repository"
 	"backend/internal/wsserver"
 	"net/http"
 )
@@ -10,12 +11,14 @@ type ChatRoomsService interface {
 }
 
 type chatRoomsService struct {
-	wss wsserver.WSServer
+	wss     wsserver.WSServer
+	msgRepo repository.MessagesRepository
 }
 
-func NewChatRoomsService(wss wsserver.WSServer) ChatRoomsService {
+func NewChatRoomsService(wss wsserver.WSServer, msgRepo repository.MessagesRepository) ChatRoomsService {
 	return &chatRoomsService{
-		wss: wss,
+		wss:     wss,
+		msgRepo: msgRepo,
 	}
 }
 
@@ -25,4 +28,11 @@ func (srv *chatRoomsService) Connect(r http.ResponseWriter, w *http.Request) {
 
 	// Subscribe
 	srv.wss.Subscribe(conn)
+
+	// Send history
+	msgs := srv.msgRepo.ReadAll()
+
+	for _, m := range msgs {
+		srv.wss.SendMessage(conn, &m)
+	}
 }

@@ -1,4 +1,7 @@
 const msgBoxElem = document.getElementById("msg-box")
+const backendPath = "/chatroom"
+let myName = ""
+let connection;
 
 const createBubble = (sender, msg, time) => {
 	const bubbleElem = document.createElement("div")
@@ -40,10 +43,11 @@ const setName = (name) => {
 	myName = name
 	document.getElementById("name").innerHTML = myName
 }
-
-const backendPath = "/chatroom"
-let myName = "Don Pepito"
-let connection;
+const removeOlderBubbles = () => {
+	if(msgBoxElem.childElementCount > 50){
+		msgBoxElem.removeChild(msgBoxElem.firstChild)
+	}
+}
 
 document.getElementById("send-btn").addEventListener("click", () => {
 	const msg = document.getElementById("msg-input")
@@ -64,7 +68,8 @@ document.getElementById('msg-input').addEventListener('keydown', (e) => {
 window.onload = () => {
 	connection = new WebSocket("ws://" + backendURL + backendPath)
 	connection.onclose = () => {
-		console.error("Connection to server lost.")
+		console.error("Connection to server lost. Trying to reconnect...")
+		connection = new WebSocket("ws://" + backendURL + backendPath)
 	}
 	connection.onmessage = (e) => {
 		const data = JSON.parse(e.data)
@@ -73,6 +78,7 @@ window.onload = () => {
 			data.user = null
 		}
 		createBubble(data.user, data.msg, getTime(data.time))
+		removeOlderBubbles()
 	}
 	connection.onopen = () => {
 		console.log("Connection opened.")
